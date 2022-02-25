@@ -1,3 +1,4 @@
+import { currentUser } from './../models/currentUser';
 import { Petition } from './../models/petition';
 import { Component, OnInit } from '@angular/core';
 import { ContractService } from "./services/near-api-service.service";
@@ -10,10 +11,13 @@ import { ContractService } from "./services/near-api-service.service";
 export class AppComponent implements OnInit{
   isUserSignedIn:boolean = false;
   petitionList:Petition[] =[]; 
+  currentUser!: currentUser;
   constructor(private contractService: ContractService) { 
   } 
-  ngOnInit(): void {    
-    this.isUserSignedIn = this.contractService.currentUser? true : false;
+  ngOnInit(): void {  
+    this.contractService.isSignIn().subscribe({
+      next: (isUserSignedIn) => this.isUserSignedIn = isUserSignedIn
+    });      
     //get all petitions by querying contract state without setting up an account
     this.contractService.getPetitions().subscribe({
       next: (data) =>{  
@@ -40,11 +44,23 @@ export class AppComponent implements OnInit{
   addPetition(){
   }
   signIn(){
-    this.contractService.signIn();
-
+    this.contractService.signIn().subscribe(      {
+        next: (currentUser) => {
+           this.isUserSignedIn = true;
+           this.currentUser = currentUser;
+        }
+      }
+    )
   }
   signOut(){
+    this.contractService.signOut().subscribe({
+      next: (isSignedOut) => {
+        if(isSignedOut) {
+          window.location.reload()
+        }
+      }
 
+    })
   }
   signFundedPetition(petitionId:number, fund:string){
     this.contractService.signPetitionWithFunds(petitionId, fund);

@@ -1,3 +1,4 @@
+import { currentUser } from './../../models/currentUser';
 import { Petition } from './../../models/petition';
 import { Injectable } from '@angular/core';
 import * as nearAPI from "near-api-js";
@@ -8,7 +9,7 @@ import { environment } from "../../environments/environment";
   providedIn: 'root'
 })
 export class ContractService {
-  currentUser:{accountId:string, accountBal?:number}|undefined;
+  currentUser:currentUser|undefined;
   private provider = new nearAPI.providers.JsonRpcProvider(environment.config.nodeUrl);
   ready:Promise<nearAPI.WalletConnection>;
   contract!: nearAPI.Contract | any;
@@ -57,11 +58,9 @@ export class ContractService {
               const petition:Petition = json;   
               //the sign method on the contract does not expect a ZERO based index. TODO: update the contract to expect zero-based indexs           
               petition.id = index+1;
-              console.log(petition);
               observer.next(petition);
             }
-          }
-       
+          } 
           observer.complete();
         }
       ).catch(
@@ -105,26 +104,38 @@ export class ContractService {
 
   }
     
-  async signIn() { 
-    const walletConnection = await this.ready;
-    if (walletConnection.getAccountId()) {
-      this.currentUser = {
-        // Gets the accountId as a string
-        accountId: walletConnection.getAccountId()        
-      };
-    }
-    else {
-      // If not signed in redirect to the NEAR wallet to sign in
-      // keys will be stored in the BrowserLocalStorageKeyStore
-      if(!walletConnection.isSignedIn()) {
-        return walletConnection.requestSignIn(
-          {contractId: environment.config.contractName, methodNames: [...environment.call_methods, ...environment.view_methods]          
-          });
-        } 
-        this.currentUser = {
-          // Gets the accountId as a string
-          accountId: walletConnection.getAccountId()}       
-    }       
+signIn():Observable<currentUser> { 
+    let walletConnection; 
+    let obs = new Observable<currentUser>((observer) => {
+      this.ready.then(
+        (res)=> {
+          walletConnection = res;
+          if(!walletConnection.isSignedIn()) {
+             walletConnection.requestSignIn(
+              {contractId: environment.config.contractName, methodNames: [...environment.call_methods, ...environment.view_methods]          
+              });
+            }         
+          this.currentUser = {
+            // Gets the accountId as a string
+            accountId: walletConnection.getAccountId()
+          }}          
+      );
+      observer.next(this.currentUser);
+    });
+     return obs;
+         
+  }
+
+  isSignIn():Observable<boolean> { 
+    let walletConnection; 
+    let obs = new Observable<boolean>((observer) => {
+      this.ready.then(
+        (res)=> {
+          walletConnection = res;
+          observer.next(walletConnection.isSignedIn()); 
+    });
+    });   
+    return obs;
   }
   setContract(walletConnection: nearAPI.WalletConnection):nearAPI.Contract {
     const contract = new nearAPI.Contract( 
@@ -153,11 +164,16 @@ export class ContractService {
       );
   }
 
-  signOut(){
-    this.ready.then(
-      (res) => res.signOut()
-    );
-    //refresh page
+ 
+
+  signOut():Observable<boolean>{
+    let obs = new Observable<boolean>((observer) => {
+      this.ready.then(
+        (res) => res.signOut()
+      );
+      observer.next(true);
+    })
+    return obs;
   }
 
 
