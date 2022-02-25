@@ -56,7 +56,8 @@ export class AppComponent implements OnInit{
     this.contractService.signOut().subscribe({
       next: (isSignedOut) => {
         if(isSignedOut) {
-          window.location.reload()
+          //TODO change this to a better angular implementation but you should add routing first
+          window.location.reload();
         }
       }
 

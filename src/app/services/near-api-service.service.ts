@@ -164,7 +164,15 @@ signIn():Observable<currentUser> {
       );
   }
 
- 
+  addPetition(petition: Petition):Observable<Petition>{
+    let obs = new Observable<Petition>((observer) => {
+      const result = this.contract.createPetition(
+        { petition: petition}
+      ).then();
+      observer.next(petition);
+  });
+  return obs;
+}
 
   signOut():Observable<boolean>{
     let obs = new Observable<boolean>((observer) => {
