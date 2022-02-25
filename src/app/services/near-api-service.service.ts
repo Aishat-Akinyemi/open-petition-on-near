@@ -1,3 +1,4 @@
+import { FormGroup } from '@angular/forms';
 import { currentUser } from './../../models/currentUser';
 import { Petition } from './../../models/petition';
 import { Injectable } from '@angular/core';
@@ -164,12 +165,12 @@ signIn():Observable<currentUser> {
       );
   }
 
-  addPetition(petition: Petition):Observable<Petition>{
-    let obs = new Observable<Petition>((observer) => {
+  addPetition(petitionForm: FormGroup):Observable<boolean>{
+    let obs = new Observable<boolean>((observer) => {
       const result = this.contract.createPetition(
-        { petition: petition}
+        { petition: petitionForm.value}
       ).then();
-      observer.next(petition);
+      observer.next(true);
   });
   return obs;
 }

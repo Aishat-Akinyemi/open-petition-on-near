@@ -3,7 +3,36 @@
   <span class="sign-in" *ngIf="!isUserSignedIn"><button (click)="signIn()">Sign In</button></span>
   <span class="sign-in" *ngIf="isUserSignedIn"><button (click)="signOut()">Sign Out</button></span>
 </header>
-<section class="container">
+<section class="create-petition-container">
+  <form [formGroup]="createPetitionForm" (ngSubmit)="createPetition(createPetitionForm)">
+    <div>
+      <label>
+        Title:
+        <input formControlName="title" placeholder="Title of petition">
+      </label>
+    </div>
+    <div>
+      <label>
+        Body:
+        <input formControlName="body" placeholder="Description of petition">
+      </label>
+    </div>
+    <div>
+      <label>
+        Is the petition a funded petition:
+        <input type="checkbox" formControlName="isFunded">
+      </label>
+    </div>
+    <div *ngIf="createPetitionForm.value.isFunded">
+      <label>
+        What is the minimum fund amount for this petition:
+        <input formControlName="minFundAmount">
+      </label>
+    </div>
+    <button type="submit" [disabled]="!isValidForm()">Create Petition</button>
+  </form>
+</section>
+<section class="petition-list-container">
   <div class="list">     
     <ng-container *ngIf="petitionList.length>0; else elseTemplate">      
       <details *ngFor="let petition of petitionList; let i=index">
@@ -32,6 +61,3 @@
     </ng-template>   
   </div>  
 </section>
-<!-- <section>
-
-</section> -->
