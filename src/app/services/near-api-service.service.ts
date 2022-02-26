@@ -144,8 +144,10 @@ signIn():Observable<currentUser> {
       walletConnection.account(), 
       // name of contract you're connecting to
       environment.config.contractName, {
-      viewMethods: environment.view_methods, // view methods do not change state but usually return a value
-      changeMethods: environment.call_methods, // change methods modify state   
+      viewMethods: environment.view_methods, 
+      // view methods do not change state but usually return a value
+      changeMethods: environment.call_methods, 
+      // change methods modify state   
       });
       return contract;
   }

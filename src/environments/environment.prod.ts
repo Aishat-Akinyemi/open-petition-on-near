@@ -1,12 +1,14 @@
-const CONTRACT_NAME = 'hello-world'; /* TODO: fill this in! */
+const CONTRACT_NAME = 'dev-1645520158922-84401134614929'; 
 
 export const environment = {
-  production: true,
-  config : {
-    networkId: 'mainnet',
-    nodeUrl: 'https://rpc.mainnet.near.org',
+  production: false,
+  config: {
+    networkId: 'testnet',
+    nodeUrl: 'https://rpc.testnet.near.org',
     contractName: CONTRACT_NAME,
-    walletUrl: 'https://wallet.near.org',
-    helperUrl: 'https://helper.mainnet.near.org'
-  }
+    walletUrl: 'https://wallet.testnet.near.org',
+    helperUrl: 'https://helper.testnet.near.org'
+  },
+  call_methods: ['createPetition', 'sign'],
+  view_methods: ['list', 'show', 'listSignatories']
 };
