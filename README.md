@@ -1,5 +1,7 @@
 # OpenPetitionScFrontEnd
 
+[Deployed Here](https://aishat-akinyemi.github.io/open-petition-on-near/)
+
 This is the front-end to the Open Petition smart contract (on NEAR) that can be found [here in this repo.](https://github.com/Aishat-Akinyemi/OpenPetition-NEAR)
 
 ## Development server
